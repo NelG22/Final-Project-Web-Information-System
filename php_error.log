@@ -1,0 +1,619 @@
+[06-Dec-2024 15:13:10 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:13:10 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:13:10 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:13:10 Europe/Berlin] Preparing select query: SELECT avatar FROM contacts WHERE id = ? AND user_id = ?
+[06-Dec-2024 15:13:10 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:13:10 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(176): mysqli->prepare('SELECT avatar F...')
+#1 {main}
+[06-Dec-2024 15:13:15 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:13:15 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:13:15 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:13:15 Europe/Berlin] Preparing select query: SELECT avatar FROM contacts WHERE id = ? AND user_id = ?
+[06-Dec-2024 15:13:15 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:13:15 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(176): mysqli->prepare('SELECT avatar F...')
+#1 {main}
+[06-Dec-2024 15:13:23 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:13:23 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:13:23 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:13:23 Europe/Berlin] Preparing select query: SELECT avatar FROM contacts WHERE id = ? AND user_id = ?
+[06-Dec-2024 15:13:23 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:13:23 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(176): mysqli->prepare('SELECT avatar F...')
+#1 {main}
+[06-Dec-2024 15:14:06 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:14:06 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:14:06 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:14:06 Europe/Berlin] Preparing select query: SELECT avatar FROM contacts WHERE id = ? AND user_id = ?
+[06-Dec-2024 15:14:06 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:14:06 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(176): mysqli->prepare('SELECT avatar F...')
+#1 {main}
+[06-Dec-2024 15:14:30 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:14:30 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:14:30 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:14:30 Europe/Berlin] Preparing select query: SELECT avatar FROM contacts WHERE id = ? AND user_id = ?
+[06-Dec-2024 15:14:30 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:14:30 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(176): mysqli->prepare('SELECT avatar F...')
+#1 {main}
+[06-Dec-2024 15:16:01 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 4
+)
+
+[06-Dec-2024 15:16:01 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:16:01 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:16:01 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:16:01 Europe/Berlin] Processing action: delete
+[06-Dec-2024 15:16:01 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:16:01 Europe/Berlin] Verify query: SELECT id, avatar FROM contacts WHERE id = ? AND user_id = ? LIMIT 1
+[06-Dec-2024 15:16:01 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:16:01 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(187): mysqli->prepare('SELECT id, avat...')
+#1 {main}
+[06-Dec-2024 15:16:15 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 4
+)
+
+[06-Dec-2024 15:16:15 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:16:15 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:16:15 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:16:15 Europe/Berlin] Processing action: delete
+[06-Dec-2024 15:16:15 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:16:15 Europe/Berlin] Verify query: SELECT id, avatar FROM contacts WHERE id = ? AND user_id = ? LIMIT 1
+[06-Dec-2024 15:16:15 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:16:15 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(187): mysqli->prepare('SELECT id, avat...')
+#1 {main}
+[06-Dec-2024 15:16:23 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 4
+)
+
+[06-Dec-2024 15:16:23 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:16:23 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:16:23 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:16:23 Europe/Berlin] Processing action: delete
+[06-Dec-2024 15:16:23 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:16:23 Europe/Berlin] Verify query: SELECT id, avatar FROM contacts WHERE id = ? AND user_id = ? LIMIT 1
+[06-Dec-2024 15:16:23 Europe/Berlin] Error in contact_operations.php: Unknown column 'avatar' in 'field list'
+[06-Dec-2024 15:16:23 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(187): mysqli->prepare('SELECT id, avat...')
+#1 {main}
+[06-Dec-2024 15:17:17 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 4
+)
+
+[06-Dec-2024 15:17:17 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:17:17 Europe/Berlin] Added avatar column to contacts table
+[06-Dec-2024 15:17:17 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:17:17 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:17:17 Europe/Berlin] Processing action: delete
+[06-Dec-2024 15:17:17 Europe/Berlin] Attempting to delete contact ID: 4
+[06-Dec-2024 15:17:17 Europe/Berlin] Successfully deleted contact ID: 4
+[06-Dec-2024 15:18:45 Europe/Berlin] POST data: Array
+(
+    [name] => awdad
+    [phone] => asfasf
+    [email] => asd@gmail.com
+    [action] => add
+)
+
+[06-Dec-2024 15:18:45 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:18:45 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:18:45 Europe/Berlin] POST Action: add
+[06-Dec-2024 15:18:45 Europe/Berlin] Processing action: add
+[06-Dec-2024 15:18:50 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:18:50 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:18:50 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:18:59 Europe/Berlin] POST data: Array
+(
+    [contact_id] => 5
+    [name] => awdad
+    [phone] => asfasf
+    [email] => asd@gmail.com
+    [action] => edit
+)
+
+[06-Dec-2024 15:18:59 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:18:59 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:18:59 Europe/Berlin] POST Action: edit
+[06-Dec-2024 15:18:59 Europe/Berlin] Processing action: edit
+[06-Dec-2024 15:22:16 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:22:16 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:22:16 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:22:23 Europe/Berlin] POST data: Array
+(
+    [contact_id] => 5
+    [name] => awdad
+    [phone] => asfasf
+    [email] => asd@gmail.com
+    [action] => edit
+)
+
+[06-Dec-2024 15:22:23 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:22:23 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:22:23 Europe/Berlin] POST Action: edit
+[06-Dec-2024 15:22:23 Europe/Berlin] Processing action: edit
+[06-Dec-2024 15:22:23 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(157): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:22:27 Europe/Berlin] POST data: Array
+(
+    [contact_id] => 5
+    [name] => awdad
+    [phone] => asfasf
+    [email] => asd@gmail.com
+    [action] => edit
+)
+
+[06-Dec-2024 15:22:27 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:22:27 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:22:27 Europe/Berlin] POST Action: edit
+[06-Dec-2024 15:22:27 Europe/Berlin] Processing action: edit
+[06-Dec-2024 15:22:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(157): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:23:14 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:23:14 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:23:14 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:23:20 Europe/Berlin] POST data: Array
+(
+    [contact_id] => 5
+    [name] => awdad
+    [phone] => asfasf
+    [email] => asd@gmail.com
+    [action] => edit
+)
+
+[06-Dec-2024 15:23:20 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:23:20 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:23:20 Europe/Berlin] POST Action: edit
+[06-Dec-2024 15:23:20 Europe/Berlin] Processing action: edit
+[06-Dec-2024 15:23:20 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(157): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:23:35 Europe/Berlin] POST data: Array
+(
+    [contact_id] => 5
+    [name] => awdad
+    [phone] => asfasf
+    [email] => asd@gmail.com
+    [action] => edit
+)
+
+[06-Dec-2024 15:23:35 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:23:35 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:23:35 Europe/Berlin] POST Action: edit
+[06-Dec-2024 15:23:35 Europe/Berlin] Processing action: edit
+[06-Dec-2024 15:23:35 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(157): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:31:11 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:31:11 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:31:11 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:32:18 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:32:18 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:32:18 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:48:19 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:48:19 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:19 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:48:26 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:48:26 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:26 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:48:28 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 5
+)
+
+[06-Dec-2024 15:48:28 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:28 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:48:28 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:48:28 Europe/Berlin] Processing action: delete
+[06-Dec-2024 15:48:28 Europe/Berlin] Attempting to delete contact ID: 5
+[06-Dec-2024 15:48:28 Europe/Berlin] Successfully deleted contact ID: 5
+[06-Dec-2024 15:48:40 Europe/Berlin] POST data: Array
+(
+    [name] => AS
+    [phone] => ASa
+    [email] => asd@gmail.com
+    [action] => add
+)
+
+[06-Dec-2024 15:48:40 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:40 Europe/Berlin] Request Method: POST
+[06-Dec-2024 15:48:40 Europe/Berlin] POST Action: add
+[06-Dec-2024 15:48:40 Europe/Berlin] Processing action: add
+[06-Dec-2024 15:48:42 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:48:42 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:42 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:48:42 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:48:42 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:48:44 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:48:44 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:44 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:48:44 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:48:44 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:48:47 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:48:47 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:48:47 Europe/Berlin] Request Method: GET
+[06-Dec-2024 15:48:47 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:48:47 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:50:54 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:50:54 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:50:54 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:50:54 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:50:54 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:50:57 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:50:57 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:50:57 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:50:57 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:50:57 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:50:59 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 6
+)
+
+[06-Dec-2024 15:50:59 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:50:59 Europe/Berlin] Action: delete
+[06-Dec-2024 15:50:59 Europe/Berlin] Processing action: delete
+[06-Dec-2024 15:50:59 Europe/Berlin] Attempting to delete contact ID: 6
+[06-Dec-2024 15:50:59 Europe/Berlin] Successfully deleted contact ID: 6
+[06-Dec-2024 15:51:23 Europe/Berlin] POST data: Array
+(
+    [name] => aDAS
+    [phone] => DASD
+    [email] => asd@gmail.com
+    [action] => add
+)
+
+[06-Dec-2024 15:51:23 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:51:23 Europe/Berlin] Action: add
+[06-Dec-2024 15:51:23 Europe/Berlin] Processing action: add
+[06-Dec-2024 15:51:23 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(229): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:51:25 Europe/Berlin] POST data: Array
+(
+    [name] => aDAS
+    [phone] => DASD
+    [email] => asd@gmail.com
+    [action] => add
+)
+
+[06-Dec-2024 15:51:25 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:51:25 Europe/Berlin] Action: add
+[06-Dec-2024 15:51:25 Europe/Berlin] Processing action: add
+[06-Dec-2024 15:51:25 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(229): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:51:25 Europe/Berlin] POST data: Array
+(
+    [name] => aDAS
+    [phone] => DASD
+    [email] => asd@gmail.com
+    [action] => add
+)
+
+[06-Dec-2024 15:51:25 Europe/Berlin] Session data: Array
+(
+    [user_id] => 6
+    [username] => max
+)
+
+[06-Dec-2024 15:51:25 Europe/Berlin] Action: add
+[06-Dec-2024 15:51:25 Europe/Berlin] Processing action: add
+[06-Dec-2024 15:51:25 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatetruecolor() in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php:34
+Stack trace:
+#0 C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php(229): resizeAndSaveImage('C:\\xampp\\tmp\\ph...', 'uploads/avatars...')
+#1 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\contact_operations.php on line 34
+[06-Dec-2024 15:54:47 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:54:47 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:54:47 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:54:47 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:54:47 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:54:50 Europe/Berlin] POST data: Array
+(
+    [action] => delete
+    [contact_id] => 3
+)
+
+[06-Dec-2024 15:54:50 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:54:50 Europe/Berlin] Action: delete
+[06-Dec-2024 15:54:50 Europe/Berlin] POST Action: delete
+[06-Dec-2024 15:54:50 Europe/Berlin] Attempting to delete contact ID: 3
+[06-Dec-2024 15:54:50 Europe/Berlin] Successfully deleted contact ID: 3
+[06-Dec-2024 15:54:53 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:54:53 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:54:53 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:54:53 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:54:53 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:54:59 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:54:59 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:54:59 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:54:59 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:54:59 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:55:04 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:55:04 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:55:04 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:55:04 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:55:04 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:55:09 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:55:09 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:55:09 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:55:09 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:55:09 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:55:14 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:55:14 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:55:14 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:55:14 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:55:14 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:55:15 Europe/Berlin] POST data: Array
+(
+)
+
+[06-Dec-2024 15:55:15 Europe/Berlin] Session data: Array
+(
+    [user_id] => 5
+    [username] => asd
+)
+
+[06-Dec-2024 15:55:15 Europe/Berlin] Action: get_contact
+[06-Dec-2024 15:55:15 Europe/Berlin] Error in contact_operations.php: Invalid action
+[06-Dec-2024 15:55:15 Europe/Berlin] Stack trace: #0 {main}
+[06-Dec-2024 15:56:50 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 15:56:50 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 15:56:52 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 15:56:52 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 15:56:57 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 15:56:57 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 15:58:49 Europe/Berlin] Action received: add
+[06-Dec-2024 15:58:58 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 15:58:58 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 16:01:00 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 16:01:00 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 16:01:03 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 16:01:03 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 16:01:18 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 16:01:18 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 16:05:08 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 16:05:08 Europe/Berlin] Error: Invalid action
