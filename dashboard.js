@@ -1,19 +1,36 @@
-// Search functionality
-const searchInput = document.getElementById('searchInput');
-searchInput.addEventListener('input', function() {
-    const searchTerm = this.value.toLowerCase();
-    const contactCards = document.querySelectorAll('.contact-card');
-    
-    contactCards.forEach(card => {
-        const name = card.querySelector('h3').textContent.toLowerCase();
-        const email = card.querySelector('p:nth-child(3)').textContent.toLowerCase();
-        const phone = card.querySelector('p:nth-child(2)').textContent.toLowerCase();
+// Initialize all event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click event listener for delete account button
+    document.querySelector('.delete-account-btn').addEventListener('click', function() {
+        document.getElementById('deleteAccountModal').style.display = 'block';
+        document.getElementById('deleteConfirmation').value = '';
+    });
+
+    // Add click event listener for delete account modal close button
+    document.querySelector('#deleteAccountModal .close').addEventListener('click', function() {
+        document.getElementById('deleteAccountModal').style.display = 'none';
+    });
+
+    // Add click event listener for delete account confirmation button
+    document.querySelector('#deleteAccountModal .delete-btn').addEventListener('click', deleteAccount);
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const contactCards = document.querySelectorAll('.contact-card');
         
-        if (name.includes(searchTerm) || email.includes(searchTerm) || phone.includes(searchTerm)) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
+        contactCards.forEach(card => {
+            const name = card.querySelector('h3').textContent.toLowerCase();
+            const email = card.querySelector('p:nth-child(3)').textContent.toLowerCase();
+            const phone = card.querySelector('p:nth-child(2)').textContent.toLowerCase();
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm) || phone.includes(searchTerm)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     });
 });
 
@@ -32,6 +49,75 @@ function showEditContactModal() {
 
 function closeEditContactModal() {
     document.getElementById('editContactModal').style.display = 'none';
+}
+
+// Profile Modal Functions
+function showProfileModal() {
+    const modal = document.getElementById('profileModal');
+    modal.style.display = 'block';
+}
+
+function closeProfileModal() {
+    const modal = document.getElementById('profileModal');
+    modal.style.display = 'none';
+}
+
+// Delete Account Modal Functions
+function showDeleteAccountModal() {
+    const modal = document.getElementById('deleteAccountModal');
+    modal.style.display = 'block';
+    document.getElementById('deleteConfirmation').value = '';
+}
+
+function closeDeleteAccountModal() {
+    const modal = document.getElementById('deleteAccountModal');
+    modal.style.display = 'none';
+}
+
+function deleteAccount() {
+    const confirmationInput = document.getElementById('deleteConfirmation');
+    if (confirmationInput.value !== 'DELETE') {
+        showNotification('Please type "DELETE" to confirm account deletion.', 'error');
+        return;
+    }
+
+    // Show loading state
+    const deleteBtn = document.querySelector('#deleteAccountModal .delete-btn');
+    const originalText = deleteBtn.textContent;
+    deleteBtn.textContent = 'Deleting...';
+    deleteBtn.disabled = true;
+
+    // Create form data
+    const formData = new FormData();
+    formData.append('action', 'delete_account');
+
+    fetch('user_operations.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showNotification('Account deleted successfully. Redirecting...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.php';
+            }, 2000);
+        } else {
+            throw new Error(data.message || 'Error deleting account');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification(error.message || 'An error occurred while deleting the account', 'error');
+        // Reset button state
+        deleteBtn.textContent = originalText;
+        deleteBtn.disabled = false;
+    });
 }
 
 // Show notification function
@@ -206,22 +292,15 @@ function deleteContact(contactId) {
 
 // Close modals when clicking outside
 window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
+    const modals = document.getElementsByClassName('modal');
+    for (let modal of modals) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 }
 
-// Profile Modal Functions
-function showProfileModal() {
-    document.getElementById('profileModal').style.display = 'block';
-    fetchProfileData();
-}
-
-function closeProfileModal() {
-    document.getElementById('profileModal').style.display = 'none';
-    document.getElementById('profileForm').reset();
-}
-
+// Profile Management
 async function fetchProfileData() {
     try {
         const response = await fetch('profile_operations.php', {
@@ -402,42 +481,6 @@ async function clearAllContacts() {
     } catch (error) {
         console.error('Error:', error);
         showNotification('An error occurred while clearing contacts', 'error');
-    }
-}
-
-// Delete Account
-async function deleteAccount() {
-    if (!confirm('WARNING: Are you sure you want to delete your account? This will permanently delete all your data and cannot be undone.')) {
-        return;
-    }
-    
-    // Double confirmation for account deletion
-    if (!confirm('Please confirm again that you want to delete your account permanently.')) {
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('action', 'delete_account');
-    
-    try {
-        const response = await fetch('profile_operations.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification(result.message, 'success');
-            setTimeout(() => {
-                window.location.href = 'index.php';
-            }, 2000);
-        } else {
-            showNotification(result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('An error occurred while deleting your account', 'error');
     }
 }
 

@@ -83,7 +83,6 @@ require_once "config.php";
                     <?php endif; ?>
                 </div>
                 <h2><?php echo isset($user['username']) ? htmlspecialchars($user['username']) : 'User'; ?></h2>
-                <p class="contacts-count"><i class="fas fa-address-book"></i> <?php echo $contacts_count; ?> Contacts</p>
                 <button class="edit-profile-btn" onclick="showProfileModal()">
                     <i class="fas fa-edit"></i>
                     Edit Profile
@@ -97,6 +96,10 @@ require_once "config.php";
                 <div class="stat-item">
                     <i class="fas fa-phone"></i>
                     <span><?php echo isset($user['phone']) && !empty($user['phone']) ? htmlspecialchars($user['phone']) : 'No phone set'; ?></span>
+                </div>
+                <div class="stat-item contacts-count">
+                    <i class="fas fa-address-book"></i>
+                    <span><?php echo $contacts_count; ?> Contacts</span>
                 </div>
             </div>
         </aside>
@@ -220,6 +223,14 @@ require_once "config.php";
                          style="<?php echo isset($user['avatar']) && !empty($user['avatar']) ? 'display:block;' : 'display:none;'; ?> max-width: 200px; margin-top: 10px;">
                 </div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
+                <div class="profile-danger-zone">
+                    <h3>Danger Zone</h3>
+                    <p>Once you delete your account, there is no going back. Please be certain.</p>
+                    <button type="button" class="delete-account-btn">
+                        <i class="fas fa-trash-alt"></i>
+                        Delete Account
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -253,6 +264,29 @@ require_once "config.php";
         </form>
     </div>
 </div>
+    <!-- Delete Account Modal -->
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Account</h2>
+                <span class="close" onclick="closeDeleteAccountModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Warning: This action cannot be undone. All your contacts and data will be permanently deleted.</p>
+                </div>
+                <div class="confirmation-input">
+                    <label for="deleteConfirmation">Type "DELETE" to confirm:</label>
+                    <input type="text" id="deleteConfirmation" placeholder="Type DELETE">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeDeleteAccountModal()">Cancel</button>
+                <button class="delete-btn" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </div>
+    </div>
     <script src="dashboard.js"></script>
 </body>
 </html>
