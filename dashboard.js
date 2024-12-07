@@ -1,19 +1,5 @@
 // Initialize all event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Add click event listener for delete account button
-    document.querySelector('.delete-account-btn').addEventListener('click', function() {
-        document.getElementById('deleteAccountModal').style.display = 'block';
-        document.getElementById('deleteConfirmation').value = '';
-    });
-
-    // Add click event listener for delete account modal close button
-    document.querySelector('#deleteAccountModal .close').addEventListener('click', function() {
-        document.getElementById('deleteAccountModal').style.display = 'none';
-    });
-
-    // Add click event listener for delete account confirmation button
-    document.querySelector('#deleteAccountModal .delete-btn').addEventListener('click', deleteAccount);
-
     // Search functionality
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', function() {
@@ -60,64 +46,6 @@ function showProfileModal() {
 function closeProfileModal() {
     const modal = document.getElementById('profileModal');
     modal.style.display = 'none';
-}
-
-// Delete Account Modal Functions
-function showDeleteAccountModal() {
-    const modal = document.getElementById('deleteAccountModal');
-    modal.style.display = 'block';
-    document.getElementById('deleteConfirmation').value = '';
-}
-
-function closeDeleteAccountModal() {
-    const modal = document.getElementById('deleteAccountModal');
-    modal.style.display = 'none';
-}
-
-function deleteAccount() {
-    const confirmationInput = document.getElementById('deleteConfirmation');
-    if (confirmationInput.value !== 'DELETE') {
-        showNotification('Please type "DELETE" to confirm account deletion.', 'error');
-        return;
-    }
-
-    // Show loading state
-    const deleteBtn = document.querySelector('#deleteAccountModal .delete-btn');
-    const originalText = deleteBtn.textContent;
-    deleteBtn.textContent = 'Deleting...';
-    deleteBtn.disabled = true;
-
-    // Create form data
-    const formData = new FormData();
-    formData.append('action', 'delete_account');
-
-    fetch('user_operations.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showNotification('Account deleted successfully. Redirecting...', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.php';
-            }, 2000);
-        } else {
-            throw new Error(data.message || 'Error deleting account');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification(error.message || 'An error occurred while deleting the account', 'error');
-        // Reset button state
-        deleteBtn.textContent = originalText;
-        deleteBtn.disabled = false;
-    });
 }
 
 // Show notification function

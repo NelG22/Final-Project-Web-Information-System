@@ -770,29 +770,6 @@ nav {
     margin-bottom: 15px;
 }
 
-.delete-account-btn {
-    background: transparent;
-    color: #ff4444;
-    border: 1px solid #ff4444;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.delete-account-btn:hover {
-    background: #ff4444;
-    color: white;
-}
-
-.delete-account-btn i {
-    font-size: 14px;
-}
-
 .warning-message {
     display: flex;
     align-items: center;
