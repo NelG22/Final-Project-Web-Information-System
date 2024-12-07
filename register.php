@@ -73,17 +73,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Validate confirm password
-    if(empty(trim($_POST["confirm_password"]))){
-        $confirm_password_err = "Please confirm password.";     
-    } else{
-        $confirm_password = trim($_POST["confirm_password"]);
-        if(empty($password_err) && ($password != $confirm_password)){
-            $confirm_password_err = "Password did not match.";
+    if(isset($_POST["confirm_password"])) {
+        if(empty(trim($_POST["confirm_password"]))){
+            $confirm_password_err = "Please confirm password.";     
+        } else{
+            $confirm_password = trim($_POST["confirm_password"]);
+            if(empty($password_err) && ($password != $confirm_password)){
+                $confirm_password_err = "Password did not match.";
+            }
         }
     }
 
     // Validate phone (optional)
-    $phone = trim($_POST["phone"]);
+    $phone = isset($_POST["phone"]) ? trim($_POST["phone"]) : "";
     if(!empty($phone) && !preg_match("/^[0-9+\-\(\)\s]*$/", $phone)) {
         $phone_err = "Please enter a valid phone number.";
     }
