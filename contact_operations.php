@@ -94,6 +94,44 @@ function resizeAndSaveImage($source_path, $target_path, $max_dimension = 200) {
     return true;
 }
 
+function handleFileUpload($file) {
+    if (!isset($file['error']) || is_array($file['error'])) {
+        return ['success' => false, 'message' => 'Invalid file parameters'];
+    }
+
+    if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+        return ['success' => true, 'filename' => null];
+    }
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return ['success' => false, 'message' => 'File upload error: ' . $file['error']];
+    }
+
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($file['type'], $allowedTypes)) {
+        return ['success' => false, 'message' => 'Invalid file type. Only JPG, PNG, and GIF are allowed.'];
+    }
+
+    if ($file['size'] > 5242880) { // 5MB limit
+        return ['success' => false, 'message' => 'File is too large. Maximum size is 5MB.'];
+    }
+
+    $uploadDir = 'uploads/';
+    if (!file_exists($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $newFilename = uniqid() . '.' . $fileExtension;
+    $uploadPath = $uploadDir . $newFilename;
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        return ['success' => false, 'message' => 'Failed to save file'];
+    }
+
+    return ['success' => true, 'filename' => $uploadPath];
+}
+
 try {
     // First, let's check if the avatar column exists and add it if it doesn't
     $check_column = "SHOW COLUMNS FROM contacts LIKE 'avatar'";
@@ -105,410 +143,211 @@ try {
     }
 
     // Get the action from POST or GET
-    $action = $_POST['action'] ?? ($_GET['action'] ?? '');
+    $action = isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : '');
     error_log("Action received: " . $action);
 
-    if ($action === 'add') {
-        if (!isset($_POST['name']) || !isset($_POST['phone']) || !isset($_POST['email'])) {
-            throw new Exception('Missing required fields');
-        }
-
-        $name = $_POST['name'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
-        $user_id = $_SESSION['user_id'];
-        $avatar_path = null;
-
-        // Handle avatar upload if present
-        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'uploads/avatars/';
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
+    switch($action) {
+        case 'get':
+            if (!isset($_GET['id'])) {
+                throw new Exception('Contact ID is required');
             }
 
-            $file_extension = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-            $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+            $contact_id = $_GET['id'];
+            $user_id = $_SESSION['user_id'];
 
-            if (!in_array($file_extension, $allowed_types)) {
-                throw new Exception('Invalid file type. Only JPG, PNG and GIF allowed.');
-            }
-
-            $avatar_filename = uniqid() . '_' . time() . '.' . $file_extension;
-            $target_path = $upload_dir . $avatar_filename;
-
-            if (resizeAndSaveImage($_FILES['avatar']['tmp_name'], $target_path)) {
-                $avatar_path = $target_path;
-            } else {
-                throw new Exception('Failed to process avatar image');
-            }
-        }
-
-        // Insert contact
-        if ($avatar_path !== null) {
-            $sql = "INSERT INTO contacts (user_id, name, phone, email, avatar) VALUES (?, ?, ?, ?, ?)";
+            // Get contact details
+            $sql = "SELECT * FROM contacts WHERE id = ? AND user_id = ? LIMIT 1";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("issss", $user_id, $name, $phone, $email, $avatar_path);
-        } else {
-            $sql = "INSERT INTO contacts (user_id, name, phone, email) VALUES (?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isss", $user_id, $name, $phone, $email);
-        }
-
-        if ($stmt->execute()) {
-            echo json_encode([
-                'success' => true,
-                'message' => 'Contact added successfully'
-            ]);
-        } else {
-            throw new Exception('Failed to add contact: ' . $stmt->error);
-        }
-        exit;
-    }
-
-    if ($action === 'edit_contact') {
-        if (!isset($_POST['contact_id']) || !isset($_POST['name']) || !isset($_POST['phone']) || !isset($_POST['email'])) {
-            throw new Exception('Missing required fields for editing contact');
-        }
-
-        $contact_id = $_POST['contact_id'];
-        $name = $_POST['name'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
-        $user_id = $_SESSION['user_id'];
-
-        // Verify the contact belongs to the user
-        $check_sql = "SELECT * FROM contacts WHERE id = ? AND user_id = ?";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("ii", $contact_id, $user_id);
-        $check_stmt->execute();
-        $check_result = $check_stmt->get_result();
-
-        if ($check_result->num_rows === 0) {
-            throw new Exception('Contact not found or unauthorized');
-        }
-
-        // Handle avatar upload if present
-        $avatar_update = "";
-        $avatar_params = [];
-        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'uploads/avatars/';
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-
-            $file_extension = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-            $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-
-            if (!in_array($file_extension, $allowed_types)) {
-                throw new Exception('Invalid file type. Only JPG, PNG and GIF allowed.');
-            }
-
-            $avatar_filename = uniqid() . '_' . time() . '.' . $file_extension;
-            $target_path = $upload_dir . $avatar_filename;
-
-            if (resizeAndSaveImage($_FILES['avatar']['tmp_name'], $target_path)) {
-                $avatar_update = ", avatar = ?";
-                $avatar_params[] = $target_path;
-
-                // Delete old avatar if it exists
-                $old_avatar_sql = "SELECT avatar FROM contacts WHERE id = ? AND user_id = ?";
-                $old_avatar_stmt = $conn->prepare($old_avatar_sql);
-                $old_avatar_stmt->bind_param("ii", $contact_id, $user_id);
-                $old_avatar_stmt->execute();
-                $old_avatar_result = $old_avatar_stmt->get_result();
-                if ($old_avatar_row = $old_avatar_result->fetch_assoc()) {
-                    if ($old_avatar_row['avatar'] && file_exists($old_avatar_row['avatar'])) {
-                        unlink($old_avatar_row['avatar']);
-                    }
-                }
-            } else {
-                throw new Exception('Failed to process avatar image');
-            }
-        }
-
-        // Update contact
-        $sql = "UPDATE contacts SET name = ?, phone = ?, email = ?" . $avatar_update . " WHERE id = ? AND user_id = ?";
-        $params = array_merge(["ssss"], [$name, $phone, $email], $avatar_params, [$contact_id, $user_id]);
-        $stmt = $conn->prepare($sql);
-        call_user_func_array([$stmt, 'bind_param'], $params);
-
-        if ($stmt->execute()) {
-            echo json_encode([
-                'success' => true,
-                'message' => 'Contact updated successfully'
-            ]);
-        } else {
-            throw new Exception('Failed to update contact: ' . $stmt->error);
-        }
-        exit;
-    }
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $action = isset($_POST['action']) ? $_POST['action'] : '';
-        error_log("POST Action: " . $action);
-
-        if ($action === 'add') {
-            try {
-                $name = $_POST['name'];
-                $phone = $_POST['phone'];
-                $email = $_POST['email'];
-                $user_id = $_SESSION['user_id'];
-                $avatar_path = null;
-
-                // Handle avatar upload if present
-                if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-                    $upload_dir = 'uploads/avatars/';
-                    if (!file_exists($upload_dir)) {
-                        mkdir($upload_dir, 0777, true);
-                    }
-
-                    $file_extension = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-                    $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-
-                    if (!in_array($file_extension, $allowed_types)) {
-                        throw new Exception('Invalid file type. Only JPG, PNG and GIF allowed.');
-                    }
-
-                    $avatar_filename = uniqid() . '_' . time() . '.' . $file_extension;
-                    $target_path = $upload_dir . $avatar_filename;
-
-                    // Resize and save avatar
-                    if (resizeAndSaveImage($_FILES['avatar']['tmp_name'], $target_path)) {
-                        $avatar_path = $target_path;
-                    } else {
-                        throw new Exception('Failed to process avatar image');
-                    }
-                }
-
-                // Insert contact
-                if ($avatar_path !== null) {
-                    $sql = "INSERT INTO contacts (user_id, name, phone, email, avatar) VALUES (?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("issss", $user_id, $name, $phone, $email, $avatar_path);
-                } else {
-                    $sql = "INSERT INTO contacts (user_id, name, phone, email) VALUES (?, ?, ?, ?)";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("isss", $user_id, $name, $phone, $email);
-                }
-
-                if ($stmt->execute()) {
+            $stmt->bind_param("ii", $contact_id, $user_id);
+            
+            if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                if ($contact = $result->fetch_assoc()) {
                     echo json_encode([
                         'success' => true,
-                        'message' => 'Contact added successfully'
+                        'contact' => $contact
                     ]);
                 } else {
-                    throw new Exception('Failed to add contact');
+                    throw new Exception('Contact not found');
                 }
+            } else {
+                throw new Exception('Failed to fetch contact details');
+            }
+            break;
+
+        case 'add':
+            if (!isset($_POST['name']) || !isset($_POST['phone']) || !isset($_POST['email'])) {
+                throw new Exception('Missing required fields');
+            }
+
+            $name = $_POST['name'];
+            $phone = $_POST['phone'];
+            $email = $_POST['email'];
+            $user_id = $_SESSION['user_id'];
+
+            try {
+                $conn->begin_transaction();
+                
+                $sql = "INSERT INTO contacts (user_id, name, phone, email) VALUES (?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("isss", $user_id, $name, $phone, $email);
+                
+                if (!$stmt->execute()) {
+                    throw new Exception("Failed to add contact");
+                }
+                
+                $contactId = $stmt->insert_id;
+                
+                // Handle avatar upload if present
+                if (isset($_FILES['avatar'])) {
+                    $uploadResult = handleFileUpload($_FILES['avatar']);
+                    if (!$uploadResult['success'] && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
+                        throw new Exception($uploadResult['message']);
+                    }
+                    if ($uploadResult['success'] && $uploadResult['filename'] !== null) {
+                        $sql = "UPDATE contacts SET avatar = ? WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("si", $uploadResult['filename'], $contactId);
+                        if (!$stmt->execute()) {
+                            throw new Exception("Failed to update contact avatar");
+                        }
+                    }
+                }
+                
+                $conn->commit();
+                echo json_encode(['success' => true, 'message' => 'Contact added successfully']);
+                
             } catch (Exception $e) {
-                error_log("Error in add contact: " . $e->getMessage());
-                echo json_encode([
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ]);
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             }
-            exit;
-        }
-        elseif ($_POST['action'] === 'edit') {
-            if (!isset($_POST['contact_id'])) {
-                throw new Exception('Contact ID is required for edit operation');
-            }
-
-            $contact_id = intval($_POST['contact_id']);
-            error_log("Attempting to edit contact ID: " . $contact_id);
-
-            // Get existing contact data
-            $query = "SELECT * FROM contacts WHERE id = ? AND user_id = ? LIMIT 1";
-            $stmt = $conn->prepare($query);
-            if (!$stmt) {
-                throw new Exception('Failed to prepare select statement: ' . $conn->error);
-            }
+            break;
             
-            $stmt->bind_param("ii", $contact_id, $_SESSION['user_id']);
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute select statement: ' . $stmt->error);
-            }
-            
-            $result = $stmt->get_result();
-            $existing_contact = $result->fetch_assoc();
-            
-            if (!$existing_contact) {
-                throw new Exception('Contact not found or does not belong to current user');
+        case 'edit_contact':
+            if (!isset($_POST['contact_id']) || !isset($_POST['name']) || !isset($_POST['phone']) || !isset($_POST['email'])) {
+                throw new Exception('Missing required fields for editing contact');
             }
 
-            error_log("Existing contact data: " . print_r($existing_contact, true));
+            $contact_id = $_POST['contact_id'];
+            $name = $_POST['name'];
+            $phone = $_POST['phone'];
+            $email = $_POST['email'];
+            $user_id = $_SESSION['user_id'];
 
-            // Handle avatar
-            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-                // Delete old avatar if it exists
-                if ($existing_contact['avatar'] && file_exists($existing_contact['avatar'])) {
-                    unlink($existing_contact['avatar']);
+            try {
+                $conn->begin_transaction();
+                
+                // First verify the contact belongs to the user
+                $stmt = $conn->prepare("SELECT id FROM contacts WHERE id = ? AND user_id = ?");
+                $stmt->bind_param("ii", $contact_id, $user_id);
+                $stmt->execute();
+                if (!$stmt->get_result()->fetch_assoc()) {
+                    throw new Exception("Contact not found or access denied");
                 }
-
-                // Process and save new avatar
-                $upload_dir = 'uploads/avatars/contacts/';
-                if (!file_exists($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
+                
+                $updateFields = [];
+                $params = [];
+                $types = '';
+                
+                if (!empty($name)) {
+                    $updateFields[] = 'name = ?';
+                    $params[] = $name;
+                    $types .= 's';
                 }
-
-                $new_filename = uniqid() . '.' . strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-                $avatar_path = $upload_dir . $new_filename;
-
-                try {
-                    resizeAndSaveImage($_FILES['avatar']['tmp_name'], $avatar_path);
-                    error_log("New avatar saved: " . $avatar_path);
-                } catch (Exception $e) {
-                    error_log("Failed to process avatar: " . $e->getMessage());
-                    throw new Exception('Failed to process avatar: ' . $e->getMessage());
+                if (!empty($phone)) {
+                    $updateFields[] = 'phone = ?';
+                    $params[] = $phone;
+                    $types .= 's';
                 }
+                if (!empty($email)) {
+                    $updateFields[] = 'email = ?';
+                    $params[] = $email;
+                    $types .= 's';
+                }
+                
+                // Handle avatar upload if present
+                if (isset($_FILES['avatar'])) {
+                    $uploadResult = handleFileUpload($_FILES['avatar']);
+                    if (!$uploadResult['success'] && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
+                        throw new Exception($uploadResult['message']);
+                    }
+                    if ($uploadResult['success'] && $uploadResult['filename'] !== null) {
+                        $updateFields[] = 'avatar = ?';
+                        $params[] = $uploadResult['filename'];
+                        $types .= 's';
+                    }
+                }
+                
+                if (!empty($updateFields)) {
+                    $params[] = $contact_id;
+                    $types .= 'i';
+                    
+                    $sql = "UPDATE contacts SET " . implode(', ', $updateFields) . " WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param($types, ...$params);
+                    
+                    if (!$stmt->execute()) {
+                        throw new Exception("Failed to update contact");
+                    }
+                }
+                
+                $conn->commit();
+                echo json_encode(['success' => true, 'message' => 'Contact updated successfully']);
+                
+            } catch (Exception $e) {
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             }
+            break;
 
-            // Prepare update query
-            $set_clauses = [];
-            $params = [];
-            $types = "";
-
-            // Always update these fields
-            $set_clauses[] = "name = ?";
-            $set_clauses[] = "phone = ?";
-            $set_clauses[] = "email = ?";
-            $params[] = &$name;
-            $params[] = &$phone;
-            $params[] = &$email;
-            $types .= "sss";
-
-            // Add avatar if we have a new one
-            if (isset($avatar_path)) {
-                $set_clauses[] = "avatar = ?";
-                $params[] = &$avatar_path;
-                $types .= "s";
-            }
-
-            // Add contact_id and user_id
-            $params[] = &$contact_id;
-            $params[] = &$_SESSION['user_id'];
-            $types .= "ii";
-
-            $query = "UPDATE contacts SET " . implode(", ", $set_clauses) . 
-                     " WHERE id = ? AND user_id = ?";
-
-            error_log("Update query: " . $query);
-            error_log("Params types: " . $types);
-            error_log("Params values: " . print_r($params, true));
-
-            $stmt = $conn->prepare($query);
-            if (!$stmt) {
-                throw new Exception('Failed to prepare update statement: ' . $conn->error);
-            }
-
-            // Bind parameters dynamically
-            array_unshift($params, $types);
-            call_user_func_array([$stmt, 'bind_param'], $params);
-
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute update statement: ' . $stmt->error);
-            }
-
-            if ($stmt->affected_rows === 0) {
-                throw new Exception('No changes were made to the contact');
-            }
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Contact updated successfully',
-                'contact' => [
-                    'id' => $contact_id,
-                    'name' => $name,
-                    'phone' => $phone,
-                    'email' => $email,
-                    'avatar' => isset($avatar_path) ? $avatar_path : $existing_contact['avatar']
-                ]
-            ]);
-            exit;
-        }
-        elseif ($_POST['action'] === 'delete') {
+        case 'delete':
             if (!isset($_POST['contact_id'])) {
                 throw new Exception('Contact ID is required');
             }
 
-            $contact_id = intval($_POST['contact_id']);
-            error_log("Attempting to delete contact ID: " . $contact_id);
-            
-            // First verify the contact exists and belongs to the user
-            $query = "SELECT id FROM contacts WHERE id = ? AND user_id = ? LIMIT 1";
-            $stmt = $conn->prepare($query);
-            if (!$stmt) {
-                throw new Exception('Failed to prepare verify statement: ' . $conn->error);
-            }
-            
-            $stmt->bind_param("ii", $contact_id, $_SESSION['user_id']);
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute verify statement: ' . $stmt->error);
-            }
-            
-            $result = $stmt->get_result();
-            if (!$result->fetch_assoc()) {
-                throw new Exception('Contact not found or does not belong to current user');
-            }
-            
-            // Now delete the contact
-            $query = "DELETE FROM contacts WHERE id = ? AND user_id = ?";
-            $stmt = $conn->prepare($query);
-            if (!$stmt) {
-                throw new Exception('Failed to prepare delete statement: ' . $conn->error);
-            }
-            
-            $stmt->bind_param("ii", $contact_id, $_SESSION['user_id']);
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute delete statement: ' . $stmt->error);
-            }
-            
-            if ($stmt->affected_rows > 0) {
-                error_log("Successfully deleted contact ID: " . $contact_id);
-                echo json_encode([
-                    'success' => true, 
-                    'message' => 'Contact deleted successfully',
-                    'contact_id' => $contact_id
-                ]);
-            } else {
-                throw new Exception('No rows were affected by the delete operation');
-            }
-            exit;
-        }
-    }
-    elseif ($_SERVER["REQUEST_METHOD"] == "GET") {
-        if ($_GET['action'] === 'get') {
-            $contact_id = $_GET['id'];
-            
-            $query = "SELECT * FROM contacts WHERE id = ? AND user_id = ?";
-            $stmt = $conn->prepare($query);
-            if (!$stmt) {
-                throw new Exception('Failed to prepare statement');
-            }
-            
-            $stmt->bind_param("ii", $contact_id, $_SESSION['user_id']);
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute statement');
-            }
-            
-            $result = $stmt->get_result();
-            if ($contact = $result->fetch_assoc()) {
-                echo json_encode(['success' => true, 'contact' => $contact]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Contact not found']);
-            }
-            exit;
-        }
-    }
+            $contact_id = $_POST['contact_id'];
+            $user_id = $_SESSION['user_id'];
 
-    // If we get here, no valid action was specified
-    throw new Exception('Invalid action');
-
+            try {
+                $conn->begin_transaction();
+                
+                // First get the avatar path if exists
+                $stmt = $conn->prepare("SELECT avatar FROM contacts WHERE id = ? AND user_id = ?");
+                $stmt->bind_param("ii", $contact_id, $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $contact = $result->fetch_assoc();
+                
+                // Delete the contact
+                $stmt = $conn->prepare("DELETE FROM contacts WHERE id = ? AND user_id = ?");
+                $stmt->bind_param("ii", $contact_id, $user_id);
+                
+                if (!$stmt->execute()) {
+                    throw new Exception("Failed to delete contact");
+                }
+                
+                // Delete avatar file if exists
+                if ($contact && $contact['avatar'] && file_exists($contact['avatar'])) {
+                    unlink($contact['avatar']);
+                }
+                
+                $conn->commit();
+                echo json_encode(['success' => true, 'message' => 'Contact deleted successfully']);
+                
+            } catch (Exception $e) {
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            }
+            break;
+            
+        default:
+            throw new Exception('Invalid action: ' . $action);
+    }
 } catch (Exception $e) {
-    error_log("Error: " . $e->getMessage());
+    error_log("Error in contact_operations.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
-    exit;
 }
 ?>

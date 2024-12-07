@@ -17,16 +17,29 @@ $sql = "CREATE DATABASE IF NOT EXISTS " . DB_NAME;
 if (mysqli_query($conn, $sql)) {
     mysqli_select_db($conn, DB_NAME);
     
-    // Create users table
+    // Create users table with phone field
     $sql = "CREATE TABLE IF NOT EXISTS users (
         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
         username VARCHAR(50) NOT NULL UNIQUE,
         email VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) DEFAULT NULL,
         avatar VARCHAR(255) DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )";
     mysqli_query($conn, $sql);
+
+    // Add phone column if it doesn't exist
+    $result = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE 'phone'");
+    if (mysqli_num_rows($result) == 0) {
+        mysqli_query($conn, "ALTER TABLE users ADD COLUMN phone VARCHAR(20) DEFAULT NULL AFTER password");
+    }
+
+    // Add avatar column if it doesn't exist
+    $result = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE 'avatar'");
+    if (mysqli_num_rows($result) == 0) {
+        mysqli_query($conn, "ALTER TABLE users ADD COLUMN avatar VARCHAR(255) DEFAULT NULL AFTER phone");
+    }
 
     // Create contacts table
     $sql = "CREATE TABLE IF NOT EXISTS contacts (

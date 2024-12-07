@@ -53,167 +53,211 @@ require_once "config.php";
         </nav>
     </header>
 
-    <main class="dashboard-main">
-        <div class="dashboard-header">
-            <h1>Welcome, <?php echo htmlspecialchars($_SESSION["username"]); ?>!</h1>
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search contacts...">
-                <i class="fas fa-search"></i>
-            </div>
-        </div>
+    <main class="dashboard-container">
+        <!-- Profile Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="profile-header">
+                <?php
+                    // Get user information
+                    $user_id = $_SESSION["user_id"];
+                    $sql = "SELECT * FROM users WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $user = $result->fetch_assoc();
 
-        <div class="contacts-container">
-            <?php
-            $user_id = $_SESSION["user_id"];
-            $sql = "SELECT * FROM contacts WHERE user_id = ? ORDER BY name ASC";
-            
-            if ($stmt = mysqli_prepare($conn, $sql)) {
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
+                    // Get total contacts count
+                    $sql_count = "SELECT COUNT(*) as total FROM contacts WHERE user_id = ?";
+                    $stmt_count = $conn->prepare($sql_count);
+                    $stmt_count->bind_param("i", $user_id);
+                    $stmt_count->execute();
+                    $result_count = $stmt_count->get_result();
+                    $contacts_count = $result_count->fetch_assoc()['total'];
+                ?>
+                <div class="profile-avatar">
+                    <?php if (isset($user['avatar']) && !empty($user['avatar'])): ?>
+                        <img src="<?php echo htmlspecialchars($user['avatar']); ?>" alt="Profile Picture">
+                    <?php else: ?>
+                        <div class="default-avatar"><?php echo isset($user['username']) ? strtoupper(substr($user['username'], 0, 1)) : '?'; ?></div>
+                    <?php endif; ?>
+                </div>
+                <h2><?php echo isset($user['username']) ? htmlspecialchars($user['username']) : 'User'; ?></h2>
+                <button class="edit-profile-btn" onclick="showProfileModal()">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </button>
+            </div>
+            <div class="profile-info">
+                <div class="profile-info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span><?php echo isset($user['email']) ? htmlspecialchars($user['email']) : 'No email set'; ?></span>
+                </div>
+                <div class="profile-info-item">
+                    <i class="fas fa-phone"></i>
+                    <span><?php echo isset($user['phone']) && !empty($user['phone']) ? htmlspecialchars($user['phone']) : 'No phone set'; ?></span>
+                </div>
+                <div class="profile-info-item">
+                    <i class="fas fa-address-book"></i>
+                    <span><?php echo $contacts_count; ?> Contacts</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="dashboard-header">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search contacts...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button class="btn-primary" onclick="showAddContactModal()">
+                    <i class="fas fa-plus"></i>
+                    Add New Contact
+                </button>
+            </div>
+            <div class="contacts-container" id="contactsContainer">
+                <?php
+                $user_id = $_SESSION["user_id"];
+                $sql = "SELECT * FROM contacts WHERE user_id = ? ORDER BY name ASC";
                 
-                if (mysqli_stmt_execute($stmt)) {
-                    $result = mysqli_stmt_get_result($stmt);
+                if ($stmt = mysqli_prepare($conn, $sql)) {
+                    mysqli_stmt_bind_param($stmt, "i", $user_id);
                     
-                    if (mysqli_num_rows($result) > 0) {
-                        while ($contact = mysqli_fetch_assoc($result)) {
-                            ?>
-                            <div class="contact-card" data-contact-id="<?php echo $contact['id']; ?>">
-                                <div class="contact-avatar">
-                                    <?php if (isset($contact['avatar']) && $contact['avatar']): ?>
-                                        <img src="<?php echo htmlspecialchars($contact['avatar']); ?>" alt="<?php echo htmlspecialchars($contact['name']); ?>">
-                                    <?php else: ?>
-                                        <div class="default-avatar"><?php echo strtoupper(substr($contact['name'], 0, 1)); ?></div>
-                                    <?php endif; ?>
+                    if (mysqli_stmt_execute($stmt)) {
+                        $result = mysqli_stmt_get_result($stmt);
+                        
+                        if (mysqli_num_rows($result) > 0) {
+                            while ($contact = mysqli_fetch_assoc($result)) {
+                                ?>
+                                <div class="contact-card" data-contact-id="<?php echo $contact['id']; ?>">
+                                    <div class="contact-avatar">
+                                        <?php if (isset($contact['avatar']) && $contact['avatar']): ?>
+                                            <img src="<?php echo htmlspecialchars($contact['avatar']); ?>" alt="<?php echo htmlspecialchars($contact['name']); ?>">
+                                        <?php else: ?>
+                                            <div class="default-avatar"><?php echo strtoupper(substr($contact['name'], 0, 1)); ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="contact-info">
+                                        <h3><?php echo htmlspecialchars($contact['name']); ?></h3>
+                                        <p><i class="fas fa-phone"></i> <?php echo htmlspecialchars($contact['phone']); ?></p>
+                                        <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($contact['email']); ?></p>
+                                    </div>
+                                    <div class="contact-actions">
+                                        <button onclick="editContact(<?php echo $contact['id']; ?>)" class="edit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="deleteContact(<?php echo $contact['id']; ?>)" class="delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="contact-info">
-                                    <h3><?php echo htmlspecialchars($contact['name']); ?></h3>
-                                    <p><i class="fas fa-phone"></i> <?php echo htmlspecialchars($contact['phone']); ?></p>
-                                    <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($contact['email']); ?></p>
-                                </div>
-                                <div class="contact-actions">
-                                    <button onclick="editContact(<?php echo $contact['id']; ?>)" class="edit-btn">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="deleteContact(<?php echo $contact['id']; ?>)" class="delete-btn">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <?php
+                                <?php
+                            }
+                        } else {
+                            echo '<p class="no-contacts">No contacts found. Add your first contact!</p>';
                         }
-                    } else {
-                        echo '<p class="no-contacts">No contacts found. Add your first contact!</p>';
                     }
+                    mysqli_stmt_close($stmt);
                 }
-                mysqli_stmt_close($stmt);
-            }
-            ?>
+                ?>
+            </div>
         </div>
     </main>
 
     <!-- Add Contact Modal -->
-    <div id="addContactModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeAddContactModal()">&times;</span>
+<div id="addContactModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
             <h2>Add New Contact</h2>
-            <form id="addContactForm" onsubmit="return handleAddContact(event)">
-                <div class="avatar-container">
-                    <div class="default-avatar" id="newContactAvatar"></div>
-                    <button type="button" onclick="document.getElementById('newContactAvatarInput').click()" class="change-avatar-btn">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                    <input type="file" id="newContactAvatarInput" accept="image/*" style="display: none" onchange="previewContactAvatar(this.files[0])">
-                </div>
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required oninput="updateNewContactAvatar(this.value)">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <button type="submit" class="cta-button">Add Contact</button>
-            </form>
+            <span class="close" onclick="closeAddContactModal()">&times;</span>
         </div>
+        <form id="addContactForm" onsubmit="handleAddContact(event)" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="contact_avatar">Contact Picture:</label>
+                <input type="file" id="contact_avatar" name="avatar" accept="image/*" onchange="previewImage(this, 'contact_avatar_preview')" class="form-control">
+                <img id="contact_avatar_preview" style="display:none; max-width: 200px; margin-top: 10px;">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Contact</button>
+        </form>
     </div>
+</div>
 
     <!-- Profile Modal -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeProfileModal()">&times;</span>
-            <h2>Profile Management</h2>
-            <form id="profileForm" onsubmit="return updateProfile(event)">
-                <div class="avatar-container">
-                    <?php
-                    $user_query = "SELECT * FROM users WHERE id = ?";
-                    $stmt = $conn->prepare($user_query);
-                    $stmt->bind_param("i", $_SESSION["user_id"]);
-                    $stmt->execute();
-                    $user = $stmt->get_result()->fetch_assoc();
-                    
-                    if (isset($user['avatar']) && $user['avatar']) {
-                        echo '<img src="' . htmlspecialchars($user['avatar']) . '" alt="Profile Avatar" class="profile-avatar" id="userAvatar">';
-                    } else {
-                        echo '<div class="default-avatar" id="userAvatar">' . strtoupper(substr($user['username'], 0, 1)) . '</div>';
-                    }
-                    ?>
-                    <button type="button" onclick="document.getElementById('avatarInput').click()" class="change-avatar-btn">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                    <input type="file" id="avatarInput" accept="image/*" style="display: none" onchange="updateAvatar(this.files[0])">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <span class="close" onclick="closeProfileModal()">&times;</span>
+            </div>
+            <form id="profileForm" onsubmit="handleProfileUpdate(event)" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="profile_name">Name:</label>
+                    <input type="text" id="profile_name" name="name" required class="form-control" 
+                           value="<?php echo isset($user['username']) ? htmlspecialchars($user['username']) : ''; ?>">
                 </div>
                 <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
+                    <label for="profile_email">Email:</label>
+                    <input type="email" id="profile_email" name="email" required class="form-control" 
+                           value="<?php echo isset($user['email']) ? htmlspecialchars($user['email']) : ''; ?>">
                 </div>
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="profile_email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                    <label for="profile_phone">Phone:</label>
+                    <input type="tel" id="profile_phone" name="phone" class="form-control" 
+                           value="<?php echo isset($user['phone']) ? htmlspecialchars($user['phone']) : ''; ?>"
+                           placeholder="Enter your phone number">
                 </div>
                 <div class="form-group">
-                    <label for="new_password">New Password (leave blank to keep current):</label>
-                    <input type="password" id="new_password" name="new_password">
+                    <label for="profile_avatar">Profile Picture:</label>
+                    <input type="file" id="profile_avatar" name="avatar" accept="image/*" 
+                           onchange="previewImage(this, 'profile_avatar_preview')" class="form-control">
+                    <img id="profile_avatar_preview" 
+                         src="<?php echo isset($user['avatar']) && !empty($user['avatar']) ? htmlspecialchars($user['avatar']) : ''; ?>" 
+                         style="<?php echo isset($user['avatar']) && !empty($user['avatar']) ? 'display:block;' : 'display:none;'; ?> max-width: 200px; margin-top: 10px;">
                 </div>
-                <button type="submit" class="cta-button">Update Profile</button>
-                <button type="button" onclick="deleteAccount()" class="cta-button" style="background-color: #dc3545; margin-top: 10px;">Delete Account</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
             </form>
         </div>
     </div>
 <!-- Edit Contact Modal -->
 <div id="editContactModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeEditContactModal()">&times;</span>
-        <h2>Edit Contact</h2>
-        <form id="editContactForm" enctype="multipart/form-data" onsubmit="handleEditContact(event)">
+        <div class="modal-header">
+            <h2>Edit Contact</h2>
+            <span class="close" onclick="closeEditContactModal()">&times;</span>
+        </div>
+        <form id="editContactForm" onsubmit="handleEditContact(event)" enctype="multipart/form-data">
             <input type="hidden" id="edit_contact_id" name="contact_id">
-            <div class="avatar-upload">
-                <div id="editAvatarPreview" class="avatar-preview"></div>
-                <div class="avatar-edit">
-                    <input type="file" id="editContactAvatarInput" name="avatar" accept="image/*" onchange="previewEditContactAvatar(this.files[0])">
-                    <label for="editContactAvatarInput">
-                        <i class="fas fa-camera"></i> Change Photo
-                    </label>
-                </div>
-            </div>
             <div class="form-group">
                 <label for="edit_name">Name:</label>
-                <input type="text" id="edit_name" name="name" required>
+                <input type="text" id="edit_name" name="name" class="form-control">
             </div>
             <div class="form-group">
                 <label for="edit_phone">Phone:</label>
-                <input type="tel" id="edit_phone" name="phone" required>
+                <input type="tel" id="edit_phone" name="phone" class="form-control">
             </div>
             <div class="form-group">
                 <label for="edit_email">Email:</label>
-                <input type="email" id="edit_email" name="email" required>
+                <input type="email" id="edit_email" name="email" class="form-control">
             </div>
-            <div class="form-actions">
-                <button type="submit" class="save-btn">Save Changes</button>
-                <button type="button" onclick="closeEditContactModal()" class="cancel-btn">Cancel</button>
+            <div class="form-group">
+                <label for="edit_avatar">Contact Picture:</label>
+                <input type="file" id="edit_avatar" name="avatar" accept="image/*" onchange="previewImage(this, 'edit_avatar_preview')" class="form-control">
+                <img id="edit_avatar_preview" style="display:none; max-width: 200px; margin-top: 10px;">
             </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
 </div>

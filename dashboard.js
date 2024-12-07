@@ -17,7 +17,7 @@ searchInput.addEventListener('input', function() {
     });
 });
 
-// Modal handling
+// Modal Functions
 function showAddContactModal() {
     document.getElementById('addContactModal').style.display = 'block';
 }
@@ -32,22 +32,6 @@ function showEditContactModal() {
 
 function closeEditContactModal() {
     document.getElementById('editContactModal').style.display = 'none';
-}
-
-// Profile Modal Functions
-function showProfileModal() {
-    document.getElementById('profileModal').style.display = 'block';
-}
-
-function closeProfileModal() {
-    document.getElementById('profileModal').style.display = 'none';
-}
-
-// Close modals when clicking outside
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
-    }
 }
 
 // Show notification function
@@ -85,28 +69,12 @@ async function handleAddContact(event) {
     submitBtn.disabled = true;
 
     try {
-        // Log form data for debugging
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-
         const response = await fetch('contact_operations.php', {
             method: 'POST',
             body: formData
         });
         
-        console.log('Response status:', response.status);
-        const text = await response.text();
-        console.log('Raw server response:', text);
-
-        let result;
-        try {
-            result = JSON.parse(text);
-        } catch (e) {
-            console.error('JSON parse error:', e);
-            console.error('Response text:', text);
-            throw new Error('Server returned invalid JSON');
-        }
+        const result = await response.json();
         
         if (result.success) {
             showNotification(result.message || 'Contact added successfully', 'success');
@@ -123,8 +91,6 @@ async function handleAddContact(event) {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
-    
-    return false;
 }
 
 function loadContacts() {
@@ -133,135 +99,77 @@ function loadContacts() {
 
 // Edit Contact
 function editContact(contactId) {
-    if (!contactId) {
-        console.error('No contact ID provided');
-        return;
+    // Show loading state
+    const editButton = document.querySelector(`button[onclick="editContact(${contactId})"]`);
+    if (editButton) {
+        editButton.disabled = true;
+        editButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
     }
 
-    fetch(`contact_operations.php?action=get_contact&id=${contactId}`)
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.contact) {
-            showEditContactModal(); // Show modal first
-            setTimeout(() => { // Give modal time to render
+    // Fetch contact details
+    fetch(`contact_operations.php?action=get&id=${contactId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
                 populateEditForm(data.contact);
-            }, 100);
-        } else {
-            const errorMessage = data.debug_message || data.message || 'Failed to load contact details';
-            showNotification(errorMessage, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching contact:', error);
-        showNotification('Failed to load contact details', 'error');
-    });
+                showEditContactModal();
+            } else {
+                showNotification(data.message || 'Failed to fetch contact details', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Failed to fetch contact details', 'error');
+        })
+        .finally(() => {
+            // Reset button state
+            if (editButton) {
+                editButton.disabled = false;
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Edit';
+            }
+        });
 }
 
 function populateEditForm(contact) {
-    if (!contact) {
-        console.error('No contact data provided');
-        return;
-    }
-
-    // Get form elements
-    const form = document.getElementById('editContactForm');
-    if (!form) {
-        console.error('Edit contact form not found');
-        return;
-    }
-
-    // Set form values
     document.getElementById('edit_contact_id').value = contact.id;
     document.getElementById('edit_name').value = contact.name;
     document.getElementById('edit_phone').value = contact.phone;
     document.getElementById('edit_email').value = contact.email;
-    
-    // Set avatar preview if exists
-    const preview = document.getElementById('editAvatarPreview');
-    if (preview) {
-        if (contact.avatar) {
-            preview.style.backgroundImage = `url(${contact.avatar})`;
-        } else {
-            preview.style.backgroundImage = 'url("assets/default-avatar.png")';
-        }
-        preview.style.backgroundSize = 'cover';
-        preview.style.backgroundPosition = 'center';
-    } else {
-        console.warn('Avatar preview element not found');
-    }
-    
-    // Clear file input if it exists
-    const fileInput = document.getElementById('editContactAvatarInput');
-    if (fileInput) {
-        fileInput.value = '';
-    }
 }
 
-function previewEditContactAvatar(file) {
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('editAvatarPreview');
-            preview.style.backgroundImage = `url(${e.target.result})`;
-            preview.style.backgroundSize = 'cover';
-            preview.style.backgroundPosition = 'center';
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-async function handleEditContact(event) {
+function handleEditContact(event) {
     event.preventDefault();
-    console.log('Handling edit contact submission');
-
+    
     const form = document.getElementById('editContactForm');
     const formData = new FormData(form);
     formData.append('action', 'edit_contact');
     
-    // Show loading state
-    const saveBtn = form.querySelector('button[type="submit"]');
-    const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Saving...';
-    saveBtn.disabled = true;
-
-    try {
-        // Log form data for debugging
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-
-        const response = await fetch('contact_operations.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        console.log('Response status:', response.status);
-        const text = await response.text();
-        console.log('Raw server response:', text);
-
-        let result;
-        try {
-            result = JSON.parse(text);
-        } catch (e) {
-            console.error('JSON parse error:', e);
-            console.error('Response text:', text);
-            throw new Error('Server returned invalid JSON');
-        }
-        
-        if (result.success) {
-            showNotification(result.message || 'Contact updated successfully!', 'success');
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    
+    fetch('contact_operations.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Contact updated successfully', 'success');
             closeEditContactModal();
-            loadContacts(); // Refresh the contacts list
+            loadContacts();
         } else {
-            throw new Error(result.message || 'Failed to update contact');
+            showNotification(data.message || 'Failed to update contact', 'error');
         }
-    } catch (error) {
+    })
+    .catch(error => {
         console.error('Error:', error);
-        showNotification(error.message || 'An error occurred while updating the contact', 'error');
-    } finally {
-        saveBtn.textContent = originalText;
-        saveBtn.disabled = false;
-    }
+        showNotification('Failed to update contact', 'error');
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Save Changes';
+    });
 }
 
 // Delete Contact
@@ -272,59 +180,199 @@ function deleteContact(contactId) {
     }
 
     if (confirm('Are you sure you want to delete this contact?')) {
-        console.log('Deleting contact:', contactId); // Debug log
-
         const formData = new FormData();
         formData.append('action', 'delete');
         formData.append('contact_id', contactId);
 
-        // Debug log the FormData
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-
         fetch('contact_operations.php', {
             method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
+            body: formData
         })
-        .then(async response => {
-            const text = await response.text();
-            console.log('Raw response:', text); // Debug log
-
-            try {
-                const data = JSON.parse(text);
-                return { ok: response.ok, data };
-            } catch (e) {
-                console.error('JSON parse error:', e);
-                throw new Error('Invalid JSON response: ' + text);
-            }
-        })
-        .then(({ok, data}) => {
-            console.log('Parsed response:', data); // Debug log
-
-            if (!ok) {
-                throw new Error(data.debug_message || data.message || 'Server error');
-            }
-
+        .then(response => response.json())
+        .then(data => {
             if (data.success) {
-                showNotification(data.message, 'success');
-                // Remove the contact card from the DOM
-                const contactCard = document.querySelector(`[data-contact-id="${contactId}"]`);
-                if (contactCard) {
-                    contactCard.remove();
-                } else {
-                    console.warn('Contact card not found in DOM:', contactId);
-                }
-                loadContacts(); // Refresh the contacts list
+                showNotification(data.message || 'Contact deleted successfully', 'success');
+                loadContacts();
             } else {
-                throw new Error(data.debug_message || data.message || 'Failed to delete contact');
+                throw new Error(data.message || 'Failed to delete contact');
             }
         })
         .catch(error => {
-            console.error('Delete error:', error);
-            showNotification(`Error deleting contact: ${error.message}`, 'error');
+            console.error('Error:', error);
+            showNotification(error.message || 'Failed to delete contact', 'error');
         });
+    }
+}
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+// Profile Modal Functions
+function showProfileModal() {
+    document.getElementById('profileModal').style.display = 'block';
+    fetchProfileData();
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+    document.getElementById('profileForm').reset();
+}
+
+async function fetchProfileData() {
+    try {
+        const response = await fetch('profile_operations.php', {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.message || 'Failed to fetch profile data');
+        }
+
+        // Update form fields with profile data
+        const data = result.data;
+        populateProfileForm(data);
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+    }
+}
+
+function populateProfileForm(profile) {
+    if (!profile) return;
+
+    const form = document.getElementById('profileForm');
+    if (!form) return;
+
+    // Map database fields to form fields
+    const fieldMapping = {
+        'name': 'profile_name',
+        'email': 'profile_email',
+        'phone': 'profile_phone',
+        'avatar': 'profile_avatar_preview'
+    };
+
+    // Populate text inputs
+    Object.entries(fieldMapping).forEach(([dbField, formField]) => {
+        if (dbField !== 'avatar') {
+            const input = document.getElementById(formField);
+            if (input) {
+                input.value = profile[dbField] || '';
+            }
+        }
+    });
+    
+    // Handle avatar preview
+    const previewImg = document.getElementById('profile_avatar_preview');
+    if (previewImg) {
+        if (profile.avatar) {
+            previewImg.src = profile.avatar;
+            previewImg.style.display = 'block';
+        } else {
+            previewImg.style.display = 'none';
+        }
+    }
+}
+
+async function handleProfileUpdate(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('profileForm');
+    const formData = new FormData(form);
+    formData.append('action', 'update_profile');
+    
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+    
+    try {
+        const response = await fetch('profile_operations.php', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Profile updated successfully', 'success');
+            if (data.data) {
+                updateProfileSidebar(data.data);
+                // Update the default avatar if no profile picture
+                if (!data.data.avatar) {
+                    const defaultAvatar = document.querySelector('.profile-avatar .default-avatar');
+                    if (defaultAvatar && data.data.name) {
+                        defaultAvatar.textContent = data.data.name.charAt(0).toUpperCase();
+                    }
+                }
+            }
+            closeProfileModal();
+        } else {
+            throw new Error(data.message || 'Failed to update profile');
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showNotification(error.message || 'Failed to update profile', 'error');
+    } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+    }
+}
+
+async function updateProfileSidebar(profile) {
+    if (!profile) return;
+    
+    // Update profile information in the sidebar
+    const nameElement = document.querySelector('.profile-header h2');
+    const emailElement = document.querySelector('.profile-info-item:nth-child(1) span');
+    const phoneElement = document.querySelector('.profile-info-item:nth-child(2) span');
+    const avatarContainer = document.querySelector('.profile-avatar');
+    
+    // Update text content
+    if (nameElement) nameElement.textContent = profile.name || '';
+    if (emailElement) emailElement.textContent = profile.email || 'No email set';
+    if (phoneElement) phoneElement.textContent = profile.phone || 'No phone set';
+    
+    // Update avatar
+    if (avatarContainer) {
+        if (profile.avatar) {
+            avatarContainer.innerHTML = `<img src="${profile.avatar}" alt="Profile Picture">`;
+        } else if (profile.name) {
+            avatarContainer.innerHTML = `<div class="default-avatar">${profile.name.charAt(0).toUpperCase()}</div>`;
+        } else {
+            avatarContainer.innerHTML = `<div class="default-avatar">?</div>`;
+        }
+    }
+}
+
+// Preview avatar image before upload
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.style.display = 'none';
     }
 }
 
@@ -393,39 +441,7 @@ async function deleteAccount() {
     }
 }
 
-// Avatar and Profile Management
-async function updateAvatar(file) {
-    if (!file) return;
-    
-    const formData = new FormData();
-    formData.append('avatar', file);
-    
-    try {
-        const response = await fetch('upload_avatar.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification(result.message, 'success');
-            // Update avatar preview
-            const avatarContainer = document.querySelector('.avatar-container');
-            const img = document.createElement('img');
-            img.src = result.avatar_path;
-            img.alt = 'Profile Avatar';
-            img.className = 'profile-avatar';
-            avatarContainer.querySelector('.default-avatar, .profile-avatar').replaceWith(img);
-        } else {
-            showNotification(result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error uploading avatar', 'error');
-    }
-}
-
+// Profile Management
 async function updateProfile(event) {
     event.preventDefault();
     
@@ -452,26 +468,5 @@ async function updateProfile(event) {
     } catch (error) {
         console.error('Error:', error);
         showNotification('Error updating profile', 'error');
-    }
-}
-
-// Contact Avatar Preview
-function previewContactAvatar(file) {
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const avatar = document.getElementById('newContactAvatar');
-        avatar.style.backgroundImage = `url(${e.target.result})`;
-        avatar.textContent = '';
-    };
-    reader.readAsDataURL(file);
-}
-
-function updateNewContactAvatar(name) {
-    if (!name) name = 'C';
-    const avatar = document.getElementById('newContactAvatar');
-    if (!avatar.style.backgroundImage) {
-        avatar.textContent = name.charAt(0).toUpperCase();
     }
 }

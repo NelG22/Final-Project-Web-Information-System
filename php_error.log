@@ -617,3 +617,75 @@ Stack trace:
 [06-Dec-2024 16:01:18 Europe/Berlin] Error: Invalid action
 [06-Dec-2024 16:05:08 Europe/Berlin] Action received: get_contact
 [06-Dec-2024 16:05:08 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 16:21:40 Europe/Berlin] Action received: get_contact
+[06-Dec-2024 16:21:40 Europe/Berlin] Error: Invalid action
+[06-Dec-2024 16:24:00 Europe/Berlin] Action received: get
+[06-Dec-2024 16:24:01 Europe/Berlin] Action received: get
+[06-Dec-2024 16:24:01 Europe/Berlin] Action received: get
+[06-Dec-2024 16:24:02 Europe/Berlin] Action received: get
+[06-Dec-2024 16:24:03 Europe/Berlin] Action received: get
+[06-Dec-2024 16:24:04 Europe/Berlin] Action received: get
+[06-Dec-2024 16:24:52 Europe/Berlin] Action received: get
+[06-Dec-2024 16:25:15 Europe/Berlin] Action received: get
+[06-Dec-2024 16:25:23 Europe/Berlin] Action received: delete
+[06-Dec-2024 16:25:23 Europe/Berlin] Error in contact_operations.php: Invalid action: delete
+[06-Dec-2024 16:25:48 Europe/Berlin] Action received: get
+[06-Dec-2024 16:26:10 Europe/Berlin] Action received: delete
+[06-Dec-2024 16:26:10 Europe/Berlin] Error in contact_operations.php: Invalid action: delete
+[06-Dec-2024 16:26:35 Europe/Berlin] Action received: get
+[06-Dec-2024 16:26:37 Europe/Berlin] Action received: delete
+[06-Dec-2024 16:26:37 Europe/Berlin] Error in contact_operations.php: Invalid action: delete
+[06-Dec-2024 16:26:53 Europe/Berlin] Action received: get
+[06-Dec-2024 16:29:01 Europe/Berlin] Action received: delete
+[06-Dec-2024 16:29:12 Europe/Berlin] Action received: add
+[06-Dec-2024 16:29:14 Europe/Berlin] Action received: get
+[06-Dec-2024 16:29:16 Europe/Berlin] Action received: get
+[06-Dec-2024 16:31:17 Europe/Berlin] Action received: get
+[06-Dec-2024 16:31:20 Europe/Berlin] Action received: get
+[06-Dec-2024 16:31:21 Europe/Berlin] Action received: get
+[06-Dec-2024 16:32:33 Europe/Berlin] Action received: delete
+[06-Dec-2024 16:32:42 Europe/Berlin] Action received: add
+[06-Dec-2024 16:32:44 Europe/Berlin] Action received: get
+[06-Dec-2024 16:32:50 Europe/Berlin] Action received: get
+[06-Dec-2024 16:38:15 Europe/Berlin] Action received: get
+[06-Dec-2024 16:38:30 Europe/Berlin] Action received: edit_contact
+[06-Dec-2024 16:38:35 Europe/Berlin] Action received: get
+[06-Dec-2024 16:38:44 Europe/Berlin] Action received: edit_contact
+[06-Dec-2024 16:39:38 Europe/Berlin] Action received: get
+[06-Dec-2024 16:39:49 Europe/Berlin] Action received: get
+[06-Dec-2024 20:52:33 Europe/Berlin] Action received: get
+[06-Dec-2024 20:52:35 Europe/Berlin] Action received: edit_contact
+[06-Dec-2024 20:52:38 Europe/Berlin] Action received: delete
+[06-Dec-2024 20:52:53 Europe/Berlin] Action received: add
+[06-Dec-2024 20:53:18 Europe/Berlin] Action received: add
+[06-Dec-2024 20:53:30 Europe/Berlin] Action received: get
+[06-Dec-2024 20:53:36 Europe/Berlin] Action received: edit_contact
+[06-Dec-2024 20:54:22 Europe/Berlin] Action received: get
+[06-Dec-2024 20:54:26 Europe/Berlin] Action received: get
+[06-Dec-2024 21:09:38 Europe/Berlin] Action received: get
+[06-Dec-2024 21:09:45 Europe/Berlin] Action received: edit_contact
+[06-Dec-2024 21:09:50 Europe/Berlin] Action received: get
+[06-Dec-2024 21:24:39 Europe/Berlin] Action received: get
+[06-Dec-2024 21:24:49 Europe/Berlin] Action received: edit_contact
+[06-Dec-2024 21:24:59 Europe/Berlin] Action received: delete
+[07-Dec-2024 05:28:10 Europe/Berlin] Profile operation error: Unknown column 'name' in 'field list'
+[07-Dec-2024 05:28:22 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli::inTransaction() in C:\xampp\htdocs\WIS_FINAL_PROJECT\profile_operations.php:161
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\profile_operations.php on line 161
+[07-Dec-2024 05:28:28 Europe/Berlin] Profile operation error: Unknown column 'name' in 'field list'
+[07-Dec-2024 05:28:32 Europe/Berlin] Profile operation error: Unknown column 'name' in 'field list'
+[07-Dec-2024 05:28:45 Europe/Berlin] Profile operation error: Unknown column 'name' in 'field list'
+[07-Dec-2024 05:28:54 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli::inTransaction() in C:\xampp\htdocs\WIS_FINAL_PROJECT\profile_operations.php:161
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\WIS_FINAL_PROJECT\profile_operations.php on line 161
+[07-Dec-2024 05:31:57 Europe/Berlin] Profile operation error: Unknown column 'phone' in 'field list'
+[07-Dec-2024 05:32:06 Europe/Berlin] Profile operation error: Unknown column 'phone' in 'field list'
+[07-Dec-2024 05:37:05 Europe/Berlin] Profile operation error: Unknown column 'avatar' in 'field list'
+[07-Dec-2024 05:37:13 Europe/Berlin] Profile operation error: Unknown column 'avatar' in 'field list'
+[07-Dec-2024 05:37:56 Europe/Berlin] Profile operation error: Unknown column 'avatar' in 'field list'
+[07-Dec-2024 05:38:05 Europe/Berlin] Profile operation error: Unknown column 'avatar' in 'field list'
+[07-Dec-2024 05:39:19 Europe/Berlin] Action received: add
+[07-Dec-2024 05:39:21 Europe/Berlin] Action received: get
+[07-Dec-2024 05:39:30 Europe/Berlin] Action received: edit_contact

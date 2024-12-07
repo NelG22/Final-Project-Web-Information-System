@@ -1,145 +1,191 @@
 <?php
 session_start();
-require_once "config.php";
 
-// Check if user is logged in
-if (!isset($_SESSION["user_id"])) {
-    echo json_encode(["success" => false, "message" => "User not logged in"]);
-    exit();
+// Ensure no HTML error output
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', 'php_error.log');
+
+// Set JSON content type header
+header('Content-Type: application/json');
+
+// Check authentication
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+    exit;
 }
 
-$user_id = $_SESSION["user_id"];
-$response = ["success" => false, "message" => "Invalid request"];
+require_once 'config.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $action = $_POST['action'] ?? '';
-    
-    switch ($action) {
-        case 'update_profile':
-            $username = trim($_POST["username"]);
-            $email = trim($_POST["email"]);
-            $password = trim($_POST["password"]);
-            
-            // Verify unique username and email
-            $check_sql = "SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?";
-            if ($check_stmt = mysqli_prepare($conn, $check_sql)) {
-                mysqli_stmt_bind_param($check_stmt, "ssi", $username, $email, $user_id);
-                mysqli_stmt_execute($check_stmt);
-                mysqli_stmt_store_result($check_stmt);
-                
-                if (mysqli_stmt_num_rows($check_stmt) > 0) {
-                    $response["message"] = "Username or email already exists.";
-                    echo json_encode($response);
-                    exit();
-                }
-                mysqli_stmt_close($check_stmt);
-            }
-            
-            // Update profile
-            if (!empty($password)) {
-                $sql = "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?";
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "sssi", $username, $email, $hashed_password, $user_id);
-            } else {
-                $sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "ssi", $username, $email, $user_id);
-            }
-            
-            if (mysqli_stmt_execute($stmt)) {
-                $_SESSION["username"] = $username;
-                $response = [
-                    "success" => true,
-                    "message" => "Profile updated successfully",
-                    "username" => $username
-                ];
-            } else {
-                $response["message"] = "Error updating profile.";
-            }
-            mysqli_stmt_close($stmt);
-            break;
-            
-        case 'clear_contacts':
-            // Delete all contacts for the user
-            $sql = "DELETE FROM contacts WHERE user_id = ?";
-            if ($stmt = mysqli_prepare($conn, $sql)) {
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
-                if (mysqli_stmt_execute($stmt)) {
-                    $response = [
-                        "success" => true,
-                        "message" => "All contacts have been deleted successfully"
-                    ];
-                } else {
-                    $response = [
-                        "success" => false,
-                        "message" => "Error clearing contacts. Please try again."
-                    ];
-                }
-                mysqli_stmt_close($stmt);
-            }
-            break;
-            
-        case 'delete_account':
-            // Start transaction
-            mysqli_begin_transaction($conn);
-            
-            try {
-                // Delete all contacts first
-                $sql = "DELETE FROM contacts WHERE user_id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
-                
-                // Delete avatar file if exists
-                $sql = "SELECT avatar FROM users WHERE id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
-                $user = mysqli_fetch_assoc($result);
-                mysqli_stmt_close($stmt);
-                
-                if ($user['avatar'] && file_exists($user['avatar'])) {
-                    unlink($user['avatar']);
-                }
-                
-                // Then delete the user
-                $sql = "DELETE FROM users WHERE id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
-                
-                // Commit transaction
-                mysqli_commit($conn);
-                
-                // Clear session
-                session_destroy();
-                
-                $response = [
-                    "success" => true,
-                    "message" => "Your account has been deleted successfully"
-                ];
-            } catch (Exception $e) {
-                // Rollback transaction on error
-                mysqli_rollback($conn);
-                $response = [
-                    "success" => false,
-                    "message" => "Error deleting account. Please try again."
-                ];
-            }
-            break;
-            
-        default:
-            $response = [
-                "success" => false,
-                "message" => "Invalid action specified"
-            ];
-            break;
+function handleFileUpload($file) {
+    if (!isset($file['error']) || is_array($file['error'])) {
+        return ['success' => false, 'message' => 'Invalid file parameters'];
     }
+
+    if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+        return ['success' => true, 'filename' => null];
+    }
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return ['success' => false, 'message' => 'File upload error: ' . $file['error']];
+    }
+
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($file['type'], $allowedTypes)) {
+        return ['success' => false, 'message' => 'Invalid file type. Only JPG, PNG, and GIF are allowed.'];
+    }
+
+    if ($file['size'] > 5242880) { // 5MB limit
+        return ['success' => false, 'message' => 'File is too large. Maximum size is 5MB.'];
+    }
+
+    $uploadDir = 'uploads/';
+    if (!file_exists($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $newFilename = uniqid() . '.' . $fileExtension;
+    $uploadPath = $uploadDir . $newFilename;
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        return ['success' => false, 'message' => 'Failed to save file'];
+    }
+
+    return ['success' => true, 'filename' => $uploadPath];
 }
 
-echo json_encode($response);
-?>
+try {
+    $userId = $_SESSION['user_id'];
+
+    // Handle GET request for fetching profile data
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $sql = "SELECT id, username, email, phone, avatar FROM users WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . $conn->error);
+        }
+        
+        $stmt->bind_param("i", $userId);
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to execute query: " . $stmt->error);
+        }
+        
+        $result = $stmt->get_result();
+        $profile = $result->fetch_assoc();
+        
+        if (!$profile) {
+            throw new Exception("Profile not found");
+        }
+        
+        // Map username to name for frontend consistency
+        $profile['name'] = $profile['username'];
+        unset($profile['username']);
+        
+        echo json_encode([
+            'success' => true,
+            'data' => $profile
+        ]);
+        exit;
+    }
+
+    // Handle POST request for updating profile
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_profile') {
+        $conn->autocommit(FALSE);
+        
+        try {
+            $name = $_POST['name'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $phone = $_POST['phone'] ?? '';
+
+            if (empty($name) || empty($email)) {
+                throw new Exception('Name and email are required');
+            }
+
+            // Handle avatar upload if present
+            $avatarPath = null;
+            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $uploadResult = handleFileUpload($_FILES['avatar']);
+                if (!$uploadResult['success']) {
+                    throw new Exception($uploadResult['message']);
+                }
+                $avatarPath = $uploadResult['filename'];
+            }
+
+            // Build update query
+            $updateFields = ['username = ?', 'email = ?'];
+            $params = [$name, $email];
+            $types = "ss";
+
+            if (!empty($phone)) {
+                $updateFields[] = "phone = ?";
+                $params[] = $phone;
+                $types .= "s";
+            }
+
+            if ($avatarPath !== null) {
+                $updateFields[] = "avatar = ?";
+                $params[] = $avatarPath;
+                $types .= "s";
+            }
+
+            $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $params[] = $userId;
+            $types .= "i";
+
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Failed to prepare update statement: " . $conn->error);
+            }
+
+            $stmt->bind_param($types, ...$params);
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to update profile: " . $stmt->error);
+            }
+
+            // Fetch updated profile data
+            $sql = "SELECT id, username, email, phone, avatar FROM users WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $updatedProfile = $result->fetch_assoc();
+
+            // Map username to name for frontend consistency
+            $updatedProfile['name'] = $updatedProfile['username'];
+            unset($updatedProfile['username']);
+
+            $conn->commit();
+            $conn->autocommit(TRUE);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Profile updated successfully',
+                'data' => $updatedProfile
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            $conn->rollback();
+            $conn->autocommit(TRUE);
+            throw $e;
+        }
+    }
+
+    // If we get here, it's an invalid request
+    throw new Exception('Invalid request method or action');
+
+} catch (Exception $e) {
+    // Log the error for debugging
+    error_log("Profile operation error: " . $e->getMessage());
+    
+    // Send JSON error response
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
+    exit;
+}
