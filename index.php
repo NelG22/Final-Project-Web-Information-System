@@ -31,14 +31,19 @@ session_start();
             ?>
         </div>
     <?php endif; ?>
+
     <header>
         <nav>
             <div class="logo">Connectify</div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contacts">Contacts</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
                 <?php if(isset($_SESSION['user_id'])): ?>
+                    <li><a href="dashboard.php">Dashboard</a></li>
                     <li><a href="logout.php">Logout</a></li>
                 <?php endif; ?>
             </ul>
@@ -46,144 +51,172 @@ session_start();
     </header>
 
     <main>
-        <section class="hero">
-            <h1>Welcome to Connectify</h1>
-            <p>Your Smart Contact Management Solution</p>
-            <?php if(isset($_SESSION['user_id'])): ?>
-                <p class="welcome-msg">Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
-                <a href="dashboard.php" class="cta-button">Go to Dashboard</a>
-            <?php else: ?>
-                <div class="auth-buttons">
-                    <button onclick="showLoginForm()" class="cta-button">Login</button>
-                    <button onclick="showRegisterForm()" class="cta-button secondary">Register</button>
-                </div>
-            <?php endif; ?>
-        </section>
-
-        <section class="features">
-            <h2>Key Features</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <i class="fas fa-user-plus"></i>
-                    <h3>Add Contacts</h3>
-                    <p>Easily add and organize your contacts</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-search"></i>
-                    <h3>Quick Search</h3>
-                    <p>Find contacts instantly with smart search</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-edit"></i>
-                    <h3>Easy Edit</h3>
-                    <p>Update contact information seamlessly</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Secure Storage</h3>
-                    <p>Your contacts are safe with us</p>
-                </div>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Manage Your Contacts Smarter</h1>
+                <p class="hero-subtitle">Your All-in-One Contact Management Solution</p>
+                <p class="hero-description">
+                    Keep your contacts organized, accessible, and up-to-date with Connectify's powerful features and intuitive interface.
+                </p>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="dashboard.php" class="cta-button">Go to Dashboard</a>
+                <?php else: ?>
+                    <div class="hero-buttons">
+                        <button onclick="showLoginForm()" class="cta-button">Get Started</button>
+                        <button onclick="showRegisterForm()" class="cta-button secondary">Sign Up Free</button>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
-        <!-- Login Modal -->
-        <div id="loginModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Login</h2>
-                <form action="login.php" method="POST">
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Powerful Features</h2>
+                <p class="section-description">Everything you need to manage your contacts effectively</p>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-address-book"></i>
+                        <h3>Smart Organization</h3>
+                        <p>Keep all your contacts organized with easy categorization and instant search capabilities.</p>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required>
+                    <div class="feature-card">
+                        <i class="fas fa-sync"></i>
+                        <h3>Easy Updates</h3>
+                        <p>Update contact information seamlessly and keep everything current with just a few clicks.</p>
                     </div>
-                    <button type="submit" class="cta-button">Login</button>
-                </form>
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Secure Storage</h3>
+                        <p>Your contacts are protected with industry-standard security measures and encryption.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>Mobile Friendly</h3>
+                        <p>Access your contacts anywhere, anytime with our responsive mobile interface.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Register Modal -->
-        <div id="registerModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Register</h2>
-                <form action="register.php" method="POST">
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" id="username" name="username" required>
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2>How It Works</h2>
+                <p class="section-description">Get started with Connectify in three simple steps</p>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Create Account</h3>
+                        <p>Sign up for free and set up your personal profile in minutes.</p>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-email">Email:</label>
-                        <input type="email" id="reg-email" name="email" required>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Add Contacts</h3>
+                        <p>Import or add your contacts with their details easily.</p>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-password">Password:</label>
-                        <input type="password" id="reg-password" name="password" required>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Stay Connected</h3>
+                        <p>Keep your network organized and stay in touch effortlessly.</p>
                     </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Confirm Password:</label>
-                        <input type="password" id="confirm-password" name="confirm_password" required>
-                    </div>
-                    <button type="submit" class="cta-button">Register</button>
-                </form>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <h2>Ready to Get Started?</h2>
+                <p>Join thousands of users who trust Connectify for managing their contacts.</p>
+                <?php if(!isset($_SESSION['user_id'])): ?>
+                    <div class="cta-buttons">
+                        <button onclick="showRegisterForm()" class="cta-button">Create Free Account</button>
+                        <button onclick="showLoginForm()" class="cta-button secondary">Sign In</button>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>About Connectify</h4>
-                <p>Your modern solution for contact management</p>
-            </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#privacy">Privacy Policy</a></li>
-                    <li><a href="#terms">Terms of Service</a></li>
-                    <li><a href="#contact">Contact Us</a></li>
-                </ul>
-            </div>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login to Connectify</h2>
+            <form action="login.php" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="cta-button">Login</button>
+            </form>
+            <p class="form-footer">
+                Don't have an account? 
+                <a href="#" onclick="showRegisterForm()">Sign up here</a>
+            </p>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Connectify. All rights reserved.</p>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Account</h2>
+            <form action="register.php" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" required>
+                </div>
+                <button type="submit" class="cta-button">Create Account</button>
+            </form>
+            <p class="form-footer">
+                Already have an account? 
+                <a href="#" onclick="showLoginForm()">Login here</a>
+            </p>
         </div>
-    </footer>
+    </div>
 
     <script>
-        // Modal functionality
-        const loginModal = document.getElementById('loginModal');
-        const registerModal = document.getElementById('registerModal');
-        const spans = document.getElementsByClassName('close');
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
 
+        // Modal functionality
         function showLoginForm() {
-            loginModal.style.display = 'block';
+            document.getElementById('registerModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'block';
         }
 
         function showRegisterForm() {
-            registerModal.style.display = 'block';
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('registerModal').style.display = 'block';
         }
 
-        // Close button functionality
-        for (let span of spans) {
-            span.onclick = function() {
-                loginModal.style.display = 'none';
-                registerModal.style.display = 'none';
-            }
-        }
-
-        // Click outside modal to close
+        // Close modal when clicking outside
         window.onclick = function(event) {
-            if (event.target == loginModal) {
-                loginModal.style.display = 'none';
-            }
-            if (event.target == registerModal) {
-                registerModal.style.display = 'none';
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
             }
         }
+
+        // Close modal when clicking close button
+        document.querySelectorAll('.close').forEach(function(closeBtn) {
+            closeBtn.onclick = function() {
+                this.closest('.modal').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>

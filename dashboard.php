@@ -83,84 +83,76 @@ require_once "config.php";
                     <?php endif; ?>
                 </div>
                 <h2><?php echo isset($user['username']) ? htmlspecialchars($user['username']) : 'User'; ?></h2>
+                <p class="contacts-count"><i class="fas fa-address-book"></i> <?php echo $contacts_count; ?> Contacts</p>
                 <button class="edit-profile-btn" onclick="showProfileModal()">
                     <i class="fas fa-edit"></i>
                     Edit Profile
                 </button>
             </div>
-            <div class="profile-info">
-                <div class="profile-info-item">
+            <div class="profile-stats">
+                <div class="stat-item">
                     <i class="fas fa-envelope"></i>
                     <span><?php echo isset($user['email']) ? htmlspecialchars($user['email']) : 'No email set'; ?></span>
                 </div>
-                <div class="profile-info-item">
+                <div class="stat-item">
                     <i class="fas fa-phone"></i>
                     <span><?php echo isset($user['phone']) && !empty($user['phone']) ? htmlspecialchars($user['phone']) : 'No phone set'; ?></span>
-                </div>
-                <div class="profile-info-item">
-                    <i class="fas fa-address-book"></i>
-                    <span><?php echo $contacts_count; ?> Contacts</span>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <div class="main-content">
             <div class="dashboard-header">
                 <div class="search-bar">
                     <input type="text" id="searchInput" placeholder="Search contacts...">
                     <i class="fas fa-search"></i>
                 </div>
-                <button class="btn-primary" onclick="showAddContactModal()">
-                    <i class="fas fa-plus"></i>
-                    Add New Contact
-                </button>
             </div>
-            <div class="contacts-container" id="contactsContainer">
+
+            <div class="contacts-grid">
                 <?php
-                $user_id = $_SESSION["user_id"];
-                $sql = "SELECT * FROM contacts WHERE user_id = ? ORDER BY name ASC";
-                
-                if ($stmt = mysqli_prepare($conn, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "i", $user_id);
+                    $sql = "SELECT * FROM contacts WHERE user_id = ? ORDER BY name ASC";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
                     
-                    if (mysqli_stmt_execute($stmt)) {
-                        $result = mysqli_stmt_get_result($stmt);
-                        
-                        if (mysqli_num_rows($result) > 0) {
-                            while ($contact = mysqli_fetch_assoc($result)) {
-                                ?>
-                                <div class="contact-card" data-contact-id="<?php echo $contact['id']; ?>">
-                                    <div class="contact-avatar">
-                                        <?php if (isset($contact['avatar']) && $contact['avatar']): ?>
-                                            <img src="<?php echo htmlspecialchars($contact['avatar']); ?>" alt="<?php echo htmlspecialchars($contact['name']); ?>">
-                                        <?php else: ?>
-                                            <div class="default-avatar"><?php echo strtoupper(substr($contact['name'], 0, 1)); ?></div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="contact-info">
-                                        <h3><?php echo htmlspecialchars($contact['name']); ?></h3>
-                                        <p><i class="fas fa-phone"></i> <?php echo htmlspecialchars($contact['phone']); ?></p>
-                                        <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($contact['email']); ?></p>
-                                    </div>
-                                    <div class="contact-actions">
-                                        <button onclick="editContact(<?php echo $contact['id']; ?>)" class="edit-btn">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="deleteContact(<?php echo $contact['id']; ?>)" class="delete-btn">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <?php
-                            }
-                        } else {
-                            echo '<p class="no-contacts">No contacts found. Add your first contact!</p>';
-                        }
-                    }
-                    mysqli_stmt_close($stmt);
-                }
+                    while ($contact = $result->fetch_assoc()):
                 ?>
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <div class="contact-avatar">
+                            <?php if (isset($contact['avatar']) && !empty($contact['avatar'])): ?>
+                                <img src="<?php echo htmlspecialchars($contact['avatar']); ?>" alt="Contact Picture">
+                            <?php else: ?>
+                                <div class="default-avatar">
+                                    <?php echo strtoupper(substr($contact['name'], 0, 1)); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="contact-details">
+                            <h3><?php echo htmlspecialchars($contact['name']); ?></h3>
+                            <?php if (!empty($contact['email'])): ?>
+                                <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($contact['email']); ?></p>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['phone'])): ?>
+                                <p><i class="fas fa-phone"></i> <?php echo htmlspecialchars($contact['phone']); ?></p>
+                            <?php endif; ?>
+                            <?php if (!empty($contact['address'])): ?>
+                                <p><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($contact['address']); ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="contact-actions">
+                        <button onclick="editContact(<?php echo $contact['id']; ?>)" class="btn-edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteContact(<?php echo $contact['id']; ?>)" class="btn-delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <?php endwhile; ?>
             </div>
         </div>
     </main>

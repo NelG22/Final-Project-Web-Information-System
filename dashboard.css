@@ -47,40 +47,42 @@ nav {
 /* Profile Sidebar */
 .profile-sidebar {
     position: fixed;
-    top: var(--header-height); /* Position below header */
+    top: var(--header-height);
     left: 0;
     width: 320px;
     height: calc(100vh - var(--header-height));
     background: white;
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    padding: 25px;
+    padding: 30px 25px;
     box-shadow: var(--card-shadow);
     overflow-y: auto;
-    z-index: 100; /* Lower than header */
-}
-
-.profile-sidebar:hover {
-    transform: translateY(-5px);
+    z-index: 100;
+    text-align: center;
 }
 
 .profile-header {
-    text-align: center;
-    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--background-color);
 }
 
 .profile-avatar {
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    margin: 0 auto 20px;
+    margin: 0 auto 25px;
     overflow: hidden;
     border: 4px solid var(--primary-color);
-    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.2);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .profile-avatar:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
 }
 
 .profile-avatar img {
@@ -89,56 +91,237 @@ nav {
     object-fit: cover;
 }
 
-.profile-avatar .default-avatar {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 52px;
-    font-weight: 600;
+.profile-info {
+    text-align: center;
+    padding: 20px 0;
 }
 
-.profile-header h2 {
+.profile-info h2 {
     color: var(--text-color);
     font-size: 24px;
-    margin: 15px 0;
+    margin: 0 0 10px;
     font-weight: 600;
 }
 
-.edit-profile-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 24px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
+.profile-info p {
+    color: #718096;
+    margin: 5px 0;
     font-size: 15px;
-    font-weight: 500;
-    transition: all 0.3s ease;
 }
 
-.edit-profile-btn:hover {
-    background: var(--secondary-color);
-    transform: translateY(-2px);
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 25px 0;
+    padding: 15px 0;
+    border-top: 2px solid var(--background-color);
+    border-bottom: 2px solid var(--background-color);
 }
 
-.profile-info {
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #718096;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     margin-top: 25px;
 }
 
-.profile-info-item {
+/* Enhanced Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn i {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover i {
+    transform: translateX(3px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+.btn-secondary {
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+    background: linear-gradient(135deg, #45a049, #4CAF50);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.cancel-btn {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+    transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background: linear-gradient(135deg, #d32f2f, #f44336);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+}
+
+.edit-btn, .delete-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
-    padding: 12px 15px;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    transform: translateY(-2px) rotate(15deg);
+}
+
+.edit-btn:hover {
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+.delete-btn:hover {
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+}
+
+/* Button loading state */
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: button-loading-spinner 0.8s linear infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Profile Info Items */
+.profile-info-item {
     background: var(--background-color);
+    padding: 15px;
     border-radius: var(--border-radius);
+    margin-bottom: 12px;
+    text-align: left;
     transition: all 0.3s ease;
 }
 
@@ -149,8 +332,8 @@ nav {
 }
 
 .profile-info-item i {
-    width: 30px;
     color: var(--primary-color);
+    margin-right: 10px;
     font-size: 18px;
 }
 
@@ -202,26 +385,6 @@ nav {
     transform: translateY(-50%);
     color: #a0aec0;
     font-size: 18px;
-}
-
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    background: var(--secondary-color);
-    transform: translateY(-2px);
 }
 
 /* Contacts Grid */
@@ -297,28 +460,6 @@ nav {
 .contact-actions {
     display: flex;
     gap: 10px;
-}
-
-.edit-btn, .delete-btn {
-    padding: 8px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-}
-
-.edit-btn {
-    background: var(--primary-color);
-}
-
-.delete-btn {
-    background: #e53e3e;
-}
-
-.edit-btn:hover, .delete-btn:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
 }
 
 /* Responsive Design */
@@ -438,33 +579,6 @@ nav {
 .form-actions {
     margin-top: 20px;
     text-align: right;
-}
-
-.save-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.cancel-btn {
-    background-color: #f44336;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.save-btn:hover {
-    background-color: #45a049;
-}
-
-.cancel-btn:hover {
-    background-color: #da190b;
 }
 
 /* Avatar Styles */
