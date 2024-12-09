@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Check if user is logged in
+// Check if user is logged in 
 if (!isset($_SESSION["user_id"])) {
     header("location: index.php");
     exit();
@@ -42,17 +42,19 @@ require_once "config.php";
         </div>
     <?php endif; ?>
     <header>
-        <nav>
-            <div class="logo">Connectify</div>
-            <ul class="nav-links">
-                <li><a href="dashboard.php" class="active">Dashboard</a></li>
-                <li><a href="#" onclick="showAddContactModal()">Add Contact</a></li>
-                <li><a href="#" onclick="showProfileModal()">Profile</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-
+    <nav>
+        <div class="logo">Connectify</div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="dashboard.php" class="active">Dashboard</a></li>
+            <li><a href="#" onclick="showAddContactModal()">Add Contact</a></li>
+            <li><a href="#" onclick="showProfileModal()">Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </nav>
+</header>
     <main class="dashboard-container">
         <!-- Profile Sidebar -->
         <aside class="profile-sidebar">
@@ -256,6 +258,12 @@ require_once "config.php";
         </form>
     </div>
 </div>
+<script>
+function toggleMobileMenu() {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.toggle('active');
+}
+</script>
     <script src="dashboard.js"></script>
 </body>
 </html>
