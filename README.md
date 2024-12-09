@@ -2,6 +2,29 @@
 
 A modern contact management system with responsive design and user-friendly interface.
 
+## Project Structure
+```
+WIS_FINAL_PROJECT/
+├── assets/
+│   ├── css/
+│   │   ├── styles.css        # Main styles
+│   │   ├── dashboard.css     # Dashboard specific styles
+│   │   └── notifications.css # Notification styles
+│   ├── js/
+│   │   └── dashboard.js      # Dashboard functionality
+│   └── img/                  # Image assets
+├── includes/
+│   ├── config.php           # Database configuration
+│   ├── user_operations.php  # User-related operations
+│   └── contact_operations.php # Contact-related operations
+├── uploads/                 # User uploads (avatars)
+├── index.php               # Entry point
+├── login.php              # Login page
+├── register.php           # Registration page
+├── dashboard.php          # Main dashboard
+└── README.md             # Project documentation
+```
+
 ## Features
 
 ### Core Functionality
@@ -26,7 +49,7 @@ A modern contact management system with responsive design and user-friendly inte
 The application is fully responsive and works seamlessly on both desktop and mobile devices:
 - Breakpoint at 768px for mobile devices
 - Collapsible navigation menu with hamburger button
-- Touch-optimized interface elements
+- Touch-optimized interface
 - Fluid layouts and responsive grids
 
 ### Technologies Used

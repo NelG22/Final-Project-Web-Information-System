@@ -1,0 +1,30 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Log files
+*.log
+php_error.log
+
+# Environment files
+.env
+.env.local
+
+# Dependency directories
+/vendor/
+/node_modules/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Upload directory (except .gitkeep)
+/uploads/*
+!/uploads/.gitkeep
